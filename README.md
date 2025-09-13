@@ -1,5 +1,0 @@
-Im a PhD researcher at [University of Copenhagen] specializing in criminology and cybersecurity.
- My research examines criminal methodologies within digital and physical spaces — including cyberattacks, online narcotics markets, fraud, social engineering, and financial obfuscation techniques. The purpose of this work is to contribute to the development of better defense, detection, and intervention strategies. 
-
-I will be undertaking several interdisciplinary projects involving threat modeling and behavioral analysis. 
-I’m looking for ongoing technical assistance in understanding and replicating these tactics in simulated, controlled research environments to support defensive tooling and criminological analysis.
